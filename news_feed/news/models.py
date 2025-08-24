@@ -37,9 +37,7 @@ class News(models.Model):
       )
   slug = models.SlugField(
       max_length=200, 
-      unique=True, 
-      blank=True, 
-      null=True, 
+      unique=True,
       verbose_name='URL'
       )
   description = models.TextField(
