@@ -1,0 +1,66 @@
+[
+  {
+    "model": "news.newstopic",
+    "pk": 1,
+    "fields": {
+      "name": "Главное",
+      "slug": "all"
+    }
+  },
+  {
+    "model": "news.newstopic",
+    "pk": 2,
+    "fields": {
+      "name": "Спорт",
+      "slug": "sport"
+    }
+  },
+  {
+    "model": "news.newstopic",
+    "pk": 3,
+    "fields": {
+      "name": "Туризм",
+      "slug": "turizm"
+    }
+  },
+  {
+    "model": "news.newstopic",
+    "pk": 4,
+    "fields": {
+      "name": "В мире",
+      "slug": "o-mire"
+    }
+  },
+  {
+    "model": "news.newstopic",
+    "pk": 5,
+    "fields": {
+      "name": "Наука",
+      "slug": "nauka"
+    }
+  },
+  {
+    "model": "news.newstopic",
+    "pk": 6,
+    "fields": {
+      "name": "Экономика",
+      "slug": "ekonomika"
+    }
+  },
+  {
+    "model": "news.newstopic",
+    "pk": 7,
+    "fields": {
+      "name": "Общество",
+      "slug": "obshestvo"
+    }
+  },
+  {
+    "model": "news.newstopic",
+    "pk": 8,
+    "fields": {
+      "name": "Культура",
+      "slug": "kultura"
+    }
+  }
+]
