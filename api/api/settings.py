@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+from os import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5^s**)3o#otmaxa5w)w2bxj$mqqnc86t*#ff6*%r(vk4=ux72x'
+SECRET_KEY = environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get('DEBUG', False)
 
-ALLOWED_HOSTS = []
+if environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS').split()
+else:
+    ALLOWED_HOSTS = ['*']
+
+if environ.get('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS = environ.get('CSRF_TRUSTED_ORIGINS').split()
 
 
 # Application definition
@@ -83,11 +90,11 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'home',
-        'USER': 'home',
-        'PASSWORD': 'home',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': environ.get('POSTGRES_DB'),
+        'USER': environ.get('POSTGRES_USER'),
+        'PASSWORD': environ.get('POSTGRES_PASSWORD'),
+        'HOST': 'db',
+        'PORT': environ.get('POSTGRES_PORT'),
     }
 }
 
@@ -191,6 +198,9 @@ DJOSER = {
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'api-static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+    ]
 
 
 MEDIA_URL = 'api-media/'
