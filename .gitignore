@@ -8,4 +8,4 @@ sets/
 
 .env.dev
 .env.prod
-aws-key-3.pem
+aws-news.pem
