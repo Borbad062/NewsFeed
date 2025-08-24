@@ -30,7 +30,7 @@ class NewsTopicAdmin(admin.ModelAdmin):
 class NewsAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     list_display = ('title_truncated', 'newstopic', 'publication_date_format', 
-                   'user_username', 'image_preview', 'is_recent')
+                   'user_username', 'image_preview')
     list_display_links = ('title_truncated',)
     list_filter = ('newstopic', 'publication_date', 'user')
     search_fields = ('title', 'description', 'newstopic__name', 'user__username')
@@ -75,11 +75,3 @@ class NewsAdmin(admin.ModelAdmin):
             )
         return "—"
     image_preview.short_description = 'Изображение'
-    
-    def is_recent(self, obj):
-        if (now() - obj.publication_date).days < 1:
-            return "🆕 Сегодня"
-        elif (now() - obj.publication_date).days < 7:
-            return "🔥 Новое"
-        return "—"
-    is_recent.short_description = 'Статус'
