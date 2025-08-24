@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-1">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-10">
+            <!-- Контент на странице -->
+            <div class="my-5 pt-5 px-2 pb-2 bg-white custom-shadow rounded">
+                <h2 class="m-2"><strong>О нас</strong></h2>
+                <p class="m-2" style="font-size: 1.2rem;">
+                    Добро пожаловать в NewsFeed — вашу надежную платформу для самых свежих и актуальных новостей! 
+                </p>
+                <p class="m-2" style="font-size: 1.2rem;">
+                    Мы создали этот сайт для тех, кто ценит своевременную информацию и хочет быть в курсе всех значимых событий. 
+                    Наша команда профессиональных журналистов и редакторов работает круглосуточно, чтобы предоставлять вам 
+                    только проверенные и качественные новости из различных сфер: политика, экономика, технологии, культура и спорт.
+                </p>
+                <p class="m-2" style="font-size: 1.2rem;">
+                    Что отличает NewsFeed от других новостных платформ?
+                </p>
+                <ul class="m-2" style="font-size: 1.2rem;">
+                    <li>📰 <strong>Оперативность</strong> — мы публикуем новости первыми</li>
+                    <li>✅ <strong>Достоверность</strong> — вся информация тщательно проверяется</li>
+                    <li>🎯 <strong>Удобство</strong> — интуитивно понятный интерфейс и настройка отображения</li>
+                    <li>🤝 <strong>Сообщество</strong> — каждый пользователь может стать автором</li>
+                    <li>🔒 <strong>Конфиденциальность</strong> — мы заботимся о вашей приватности</li>
+                </ul>
+                <p class="m-2" style="font-size: 1.2rem;">
+                    Присоединяйтесь к нашему растущему сообществу! Читайте, делитесь новостями и будьте в центре событий 
+                    вместе с NewsFeed — вашим надежным источником информации.
+                </p>
+                <p class="m-2 fst-italic" style="font-size: 1.2rem;">
+                    С уважением, команда NewsFeed 🚀
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block footer %}
+<footer class="py-2 bg-dark">
+    <div class="container">
+        <div class="text-center">
+            <p class="m-0 text-white small">&copy; 2025 NewsFeed</p>
+            <div class="mt-1">
+                <a href="{% url 'main:about' %}" class="text-white-50 text-decoration-none me-2 small">О нас</a>
+                <a href="#" class="text-white-50 text-decoration-none me-2 small">Политика конфиденциальности</a>
+                <a href="#" class="text-white-50 text-decoration-none small">Контакты</a>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock footer %}

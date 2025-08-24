@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Карточка новости -->
+            <div class="card mb-4 custom-shadow border-0">
+                <div class="card-header bg-light border-0">
+                    <!-- Заголовок и дата -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="card-title h3 fw-bold text-dark mb-0">{{ news.title}}</h1>
+                        <div class="text-muted text-end ms-3">
+                            <small>
+                              {% if news.updated_date %}
+                                <i class="far fa-clock me-1"></i>
+                                  Обновлено {{ news.updated_date|date:"d.m.Y" }} в {{ news.updated_date|time:"H:i" }}
+                              {% else %}
+                                <i class="far fa-clock me-1"></i>
+                                  Опубликовано {{ news.publication_date|date:"d.m.Y" }} в {{ news.publication_date|time:"H:i" }}
+                              {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Изображение новости -->
+                        <div class="col-md-6 mb-3">
+                            <div class="position-relative">
+                                {% if news.image %}
+                                <img src="{{ news.image.url }}" 
+                                     class="img-fluid rounded-3 shadow-sm" 
+                                     alt="{{ news.title }}"
+                                     style="height: 300px; width: 100%; object-fit: cover;"
+                                     data-bs-toggle="modal" 
+                                     data-bs-target="#imageModal">
+                                {% else %}
+                                <img src="{% static 'deps/images/Not found image.png' %}" 
+                                     class="img-fluid rounded-3 shadow-sm" 
+                                     alt="Изображение новости"
+                                     style="height: 300px; width: 100%; object-fit: cover;"
+                                     data-bs-toggle="modal" 
+                                     data-bs-target="#imageModal">
+                                {% endif %}
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-primary">ID: {{ news.id }}</span>
+                                </div>
+                            </div>
+                            <div class="text-center mt-2">
+                                <small class="text-muted">Нажмите для увеличения</small>
+                            </div>
+                        </div>
+
+                        <!-- Описание новости -->
+                        <div class="col-md-6">
+                            <div class="news-content">
+                                <h5 class="text-muted mb-3">Описание</h5>
+                                {% if not news.user %}
+                                <p class="card-text lead" style="text-align: justify; line-height: 1.6;">
+                                    <strong>НОВОСИБИРСК, {{ news.russian_publication_date }} - NewsFeed Новости.</strong> {{ news.description }}
+                                </p>
+                                {% else %}
+                                <p class="card-text lead" style="text-align: justify; line-height: 1.6;">
+                                    <strong>НОВОСИБИРСК, {{ news.publication_date|date:'d E' }} - NewsFeed Новости, 
+                                      {{ news.user.last_name }} {{ news.user.first_name }}.
+                                    </strong> 
+                                    {{ news.description }}
+                                </p>
+                                {% endif %}
+                                <!-- Дополнительная информация -->
+                                <div class="mt-4 pt-3 border-top">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small class="text-muted">
+                                                <i class="far fa-calendar me-1"></i>
+                                                {{ news.publication_date|date:"d E Y" }}
+                                            </small>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <small class="text-muted">
+                                                <i class="far fa-clock me-1"></i>
+                                                {{ news.publication_date|time:"H:i" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent border-0">
+                    <div class="d-flex gap-2">
+                        <a href="javascript:history.back()" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Назад
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для изображения -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ news.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                {% if news.image %}
+                <img src="{{ news.image.url }}" class="img-fluid" alt="{{ news.title }}">
+                {% else %}
+                <img src="{% static 'deps/images/Not found image.png' %}" class="img-fluid" alt="Изображение новости">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

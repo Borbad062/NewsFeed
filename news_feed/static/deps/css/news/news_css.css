@@ -1,0 +1,34 @@
+.custom-shadow {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.news-content {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 3px solid #0d6efd;
+}
+
+.card-text {
+    font-size: 1.05rem;
+    color: #495057;
+}
+
+.img-fluid {
+    transition: transform 0.3s ease;
+}
+
+.img-fluid:hover {
+    transform: scale(1.02);
+    cursor: pointer;
+}
+
+.badge {
+    font-size: 0.8rem;
+}
+
+.news-prefix {
+    font-weight: bold;
+    color: #d62c2c;
+    margin-right: 5px;
+}

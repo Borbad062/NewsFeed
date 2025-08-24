@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+{% load news_tags %}
+
+{% block content %}
+<div class="container">
+  <div class="row mt-1">
+      <div class="col-lg-2">
+      </div>
+      <div class="col-lg-10">
+          <!-- Контент на странице -->
+          <div class="row">
+              <!-- Форма фильтров -->
+              <div class="dropdown mb-2">
+                  <button class="btn btn-secondary dropdown-toggle btn-dark" 
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Фильтры
+                  </button>
+                    <form action="{% if request.GET.q %}{% url "news:search" %}
+                        {% else %}{% url "news:index" slug_url %} {% endif %}" 
+                      method="get" class="dropdown-menu bg-dark" data-bs-theme="dark">
+                      {% if request.GET.q %}
+                        <input type="hidden" name="q" value="request.GET.q">
+                      {% endif %}
+                      <p class="text-white mx-3 mt-3">Сортировать:</p>
+                      <div class="form-check text-white mx-3">
+                          <input class="form-check-input" 
+                          type="radio" name="order_by" 
+                          id="flexRadioDefault1" value="default"  
+                          {% if request.GET.order_by == 'default' %} checked{% endif %}>
+                          <label class="form-check-label" for="flexRadioDefault1">
+                              По умолчанию
+                          </label>
+                      </div>
+                      <div class="form-check text-white mx-3">
+                          <input class="form-check-input" 
+                          type="radio" name="order_by" 
+                          id="flexRadioDefault2" value="publication_date"  
+                          {% if request.GET.order_by == 'publication_date' %} checked{% endif %}>
+                          <label class="form-check-label" for="flexRadioDefault2">
+                              От старых к новым
+                          </label>
+                      </div>
+                      <div class="form-check text-white mx-3">
+                          <input class="form-check-input" 
+                          type="radio" name="order_by" 
+                          id="flexRadioDefault3" value="-publication_date"  
+                          {% if request.GET.order_by == '-publication_date' %} checked{% endif %}>
+                          <label class="form-check-label" for="flexRadioDefault3">
+                              От новых к старым
+                          </label>
+                      </div>
+                      <button type="submit" class="btn btn-primary mx-3 mt-3">Применить</button>
+                  </form>
+              </div>
+         <!-- Основной контент -->
+        <div class="col-lg-9">
+            <!-- Сообщение о пустом результате поиска -->
+            {% if request.GET.q and not news_topic %}
+            <div class="text-center py-5">
+                <div class="empty-search-state">
+                    <div class="empty-search-icon mb-4">
+                        <i class="fas fa-search fa-4x text-muted"></i>
+                    </div>
+                    <h4 class="text-dark mb-3">По запросу "{{ request.GET.q }}" ничего не найдено</h4>
+                    <p class="text-muted mb-4">Попробуйте изменить поисковый запрос или воспользуйтесь фильтрами</p>
+                    <div class="empty-search-actions">
+                        <button class="btn btn-outline-secondary" onclick="history.back()">
+                            <i class="fas fa-arrow-left me-1"></i>Назад
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                <!-- Сетка новостей -->
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for product in news_topic %}
+                    <div class="col">
+                        <div class="card news-card h-100 border-0 custom-shadow">
+                            <!-- Изображение новости -->
+                            <div class="news-image-container">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+                                {% else %}
+                                <img src="{% static 'deps/images/Not found image.png' %}" class="card-img-top" alt="Новость">
+                                {% endif %}
+                                <div class="news-date-badge">
+                                    <span class="badge bg-primary">
+                                        {{ product.publication_date|date:"d M" }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <!-- Заголовок -->
+                                <h6 class="card-title news-title">
+                                    <a href="{% url 'news:news' product.slug %}" class="text-decoration-none text-dark">
+                                        {% autoescape off %}
+                                        {% if product.headline %}
+                                        {{ product.headline }}
+                                        {% else %}
+                                        {{ product.title|truncatechars:60 }}
+                                        {% endif %}{% endautoescape %}
+                                    </a>
+                                </h6>
+                                <!-- Описание -->
+                                <p class="card-text text-muted small">
+                                    {% autoescape off %}
+                                    {% if product.bodyline %}
+                                    {{ product.bodyline|truncatechars:45}}
+                                    {% else %}
+                                    {{ product.description|truncatechars:90|default:"Описание отсутствует" }}
+                                    {% endif %}{% endautoescape %}
+                                </p>
+                            </div>
+
+                            <div class="card-footer bg-transparent border-0 pt-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="far fa-clock me-1"></i>{{ product.publication_date|date:"H:i" }}
+                                    </small>
+                                    <span class="badge bg-secondary">#{{ product.display_id }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  {% endfor %}
+                </div>
+            {% endif %}
+            
+            <!-- Пагинация (только если есть новости) -->
+            {% if page_obj.has_other_pages and news_topic %}
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% change_params page=page_obj.previous_page_number %}">
+                            <i class="fas fa-chevron-left"></i> Назад
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page in page_obj.paginator.page_range %}
+                    {% if page >= page_obj.number|add:-2 and page <= page_obj.number|add:2 %}
+                    <li class="page-item {% if page == page_obj.number %}active{% endif %}">
+                        <a class="page-link" href="?{% change_params page=page %}">{{ page }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% change_params page=page_obj.next_page_number %}">
+                            Вперед <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

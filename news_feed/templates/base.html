@@ -1,0 +1,110 @@
+{% load static %}
+{% load news_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static "deps/css/bootstrap/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "deps/css/my_css.css" %}">
+    <link rel="stylesheet" href="{% static "deps/css/news/news_css.css" %}">
+    <link rel="stylesheet" href="{% static "deps/css/news/news_topic.css" %}">
+    <link rel="stylesheet" href="{% static "deps/css/news/addpage_css.css" %}">
+    <!-- Стиль footer-a для главной страницы -->
+    {% block css %}
+    
+    {% endblock css %}
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static "deps/favicon/apple-touch-icon.png" %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static "deps/favicon/favicon-32x32.png" %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static "deps/favicon/favicon-16x16.png" %}">
+    <link rel="manifest" href="{% static "deps/favicon/site.webmanifest" %}">
+    <title>{{ title }}</title>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+            <div class="container">
+                <a class="navbar-brand" href="{% url "main:index" %}">Home</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                      {% if not user.is_authenticated %}       
+                        <li class="nav-item">
+                            <a class="nav-link  text-white" href="{% url "users:login" %}">Войти</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item dropdown ">
+                            <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Профиль-{{ user }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item  text-white" href="{% url "users:profile" %}">Личный кабинет</a>
+                                </li>
+                                {% if user.is_admin or user.is_staff %}
+                                <li><a class="dropdown-item  text-white" href="{% url "admin:index" %}">Админ панель</a></li>
+                                <li><a class="dropdown-item  text-white" href="{% url "news:addpage" %}">Добавить статью</a></li>
+                                {% endif %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item  text-white" href="{% url "users:logout" %}">Выйти</a></li>
+                            </ul>
+                        </li>
+                        {% endif %}   
+                    </ul>
+                    <form class="d-flex" role="search" action="{% url "news:search" %}" method='get'>
+                        <input class="form-control me-2" name='q' type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success text-white" type="submit">Поиск</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <section>
+        <div class="container">
+            <div class="row mt-1 position-fixed z-3">
+                <!-- Каталог -->
+                <div class="dropdown mb-2">
+                    <button class="btn btn-secondary dropdown-toggle btn-dark" 
+                        type="button" data-bs-toggle="dropdown" 
+                        aria-expanded="false">Новости<img class="mx-1" 
+                        src="{% static "deps/icons/grid-fill.svg" %}" 
+                        alt="Catalog Icon" width="12"height="12">
+                    </button>
+                    <ul class="dropdown-menu bg-dark" data-bs-theme="dark">
+                      {% tag_topics as topics %}
+                      {% for topic in topics %}
+                        <li><a class="dropdown-item text-white" href="{% url "news:index" topic.slug %}">{{ topic.name }}</a></li>
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Контент -->
+        {% include "includes/notifications.html" %}
+
+        {% block content %}
+        
+        {% endblock content %}
+    </section>
+    {% block footer %}
+    
+    {% endblock  %}
+    <script src="{% static "deps/js/jquery/jquery-3.7.0.min.js" %}"></script>
+    <script src="{% static "deps/js/bootstrap/bootstrap.bundle.min.js" %}"></script>
+    <script src="{% static "deps/js/news/addpage.min.js" %}"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-slugify/1.2.1/slugify.min.js"></script>
+</body>
+
+</html>
