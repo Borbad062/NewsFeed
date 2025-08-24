@@ -84,12 +84,19 @@ WSGI_APPLICATION = 'news_feed.wsgi.application'
 
 
 
+def read_secret(secret_name):
+    try:
+        with open(f'/run/secrets/{secret_name}') as f:
+            return f.read().strip()
+    except:
+        return None
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': environ.get('POSTGRES_DB'),
         'USER': environ.get('POSTGRES_USER'),
-        'PASSWORD': environ.get('POSTGRES_PASSWORD'),
+        'PASSWORD': read_secret('pg_password') or environ.get('POSTGRES_PASSWORD'),
         'HOST': 'db',
         'PORT': environ.get('POSTGRES_PORT'),
     }
@@ -131,10 +138,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
+if DEBUG:
+    STATICFILES_DIRS = [
     BASE_DIR / 'static'
   ]
+else:
+    STATIC_ROOT = 'static'
 
+    
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 

@@ -198,9 +198,12 @@ DJOSER = {
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'api-static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-    ]
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static'
+        ]
+else:
+    STATIC_ROOT = 'static'
 
 
 MEDIA_URL = 'api-media/'

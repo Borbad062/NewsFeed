@@ -1,0 +1,82 @@
+services:
+  web:
+    build:
+      context: ./news_feed
+      dockerfile: Dockerfile.prod
+    image: web_prod:1.0.0
+    command: gunicorn news_feed.wsgi:application --bind 0.0.0.0:8000 --access-logfile '-'
+    expose:
+      - 8000
+    volumes:
+      - static_volume:/usr/src/myapp/static
+      - media_volume:/usr/src/myapp/media
+    restart: unless-stopped
+    environment: 
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/pg_password
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    secrets:
+      - pg_password    
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-bookworm
+    volumes:
+      - data:/var/lib/postgresql/data/
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/pg_password
+    secrets:
+      - pg_password
+  
+  nginx:
+    image: nginx:alpine-slim
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+      - static_volume:/app/static
+      - static_api_volume:/app/api-static
+      - media_volume:/app/media
+    ports:
+      - 80:80
+    depends_on:
+      - web
+  
+  api:
+    build: ./api
+    image: api_prod:1.0.0
+    command: gunicorn api.wsgi:application --bind 0.0.0.0:8001 --access-logfile '-'
+    expose:
+      - 8001
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/pg_password
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    secrets:
+      - pg_password       
+    volumes:
+      - static_api_volume:/usr/src/myapp/static
+      - media_volume:/usr/src/myapp/media
+    restart: unless-stopped
+    depends_on:
+      - db
+    
+secrets:
+  pg_password:
+    file: ./sets/pg_secret_password.txt
+
+volumes:
+  data:
+  static_volume:
+  static_api_volume:
+  media_volume:
