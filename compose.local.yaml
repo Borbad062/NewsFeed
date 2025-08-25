@@ -24,15 +24,7 @@ services:
       POSTGRES_USER: home
       POSTGRES_PASSWORD: home
       POSTGRES_DB: home
-  
-  dbbrowser:
-    image: adminer
-    container_name: adminer
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-  
+      
   api:
     build: ./api
     image: api:1.0.0
